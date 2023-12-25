@@ -5,11 +5,18 @@ import (
 	"net/http"
 )
 
-func handler(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprintf(writer, "Hello World, %s!", request.URL.Path[1:])
+type MyHandler struct {}
+
+func (h *MyHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Hello World!")
 }
 
+
 func main() {
-	http.HandleFunc("/", handler)
-	http.ListenAndServe(":8080", nil)
+	handler := MyHandler{}
+	server := http.Server{
+		Addr: "127.0.0.1:8080",
+		Handler: &handler,
+	}
+	server.ListenAndServe()
 }
