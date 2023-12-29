@@ -20,6 +20,8 @@ func handleTodo(w http.ResponseWriter, r *http.Request){
 		err = handlePostTodo(w, r)
 	case "DELETE":
 		err = handleDeleteTodo(w, r)
+	default:
+		http.Error(w, "Not Found", http.StatusNotFound)
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -33,6 +35,8 @@ func handleTodos(w http.ResponseWriter, r *http.Request){
 	switch r.Method {
 	case "GET":
 		err = handleGetTodos(w, r)
+	default:
+		http.Error(w, "Not Found", http.StatusNotFound)
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,6 +94,6 @@ func main(){
 		Addr: ":8080",
 	}
 	http.HandleFunc("/todo/", handleTodo)
-	http.HandleFunc("/todos", handleTodos)
+	http.HandleFunc("/todos/", handleTodos)
 	server.ListenAndServe()
 }
