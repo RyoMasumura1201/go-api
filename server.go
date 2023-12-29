@@ -8,8 +8,8 @@ import (
 )
 
 type Todo struct {
-	Id int
-	Content string
+	Id int `json:"id"`
+	Content string `json:"content"`
 }
 
 
