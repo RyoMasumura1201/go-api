@@ -1,4 +1,4 @@
-module first_webapp
+module github.com/RyoMasumura1201/go-todo
 
 go 1.18
 
