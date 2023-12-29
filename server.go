@@ -13,13 +13,13 @@ type Todo struct {
 }
 
 
-func handleRequest(w http.ResponseWriter, r *http.Request){
+func handleTodo(w http.ResponseWriter, r *http.Request){
 	var err error
 	switch r.Method {
 	case "POST":
-		err = handlePost(w, r)
+		err = handlePostTodo(w, r)
 	case "DELETE":
-		err = handleDelete(w, r)
+		err = handleDeleteTodo(w, r)
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -28,7 +28,19 @@ func handleRequest(w http.ResponseWriter, r *http.Request){
 
 }
 
-func handlePost(w http.ResponseWriter, r *http.Request)(err error){
+func handleTodos(w http.ResponseWriter, r *http.Request){
+	var err error
+	switch r.Method {
+	case "GET":
+		err = handleGetTodos(w, r)
+	}
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func handlePostTodo(w http.ResponseWriter, r *http.Request)(err error){
 	len := r.ContentLength
 	body := make([]byte, len)
 	r.Body.Read(body)
@@ -42,7 +54,7 @@ func handlePost(w http.ResponseWriter, r *http.Request)(err error){
 	return
 }
 
-func handleDelete(w http.ResponseWriter, r *http.Request)(err error){
+func handleDeleteTodo(w http.ResponseWriter, r *http.Request)(err error){
 	id ,err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return
@@ -59,10 +71,25 @@ func handleDelete(w http.ResponseWriter, r *http.Request)(err error){
 	return
 }
 
+func handleGetTodos(w http.ResponseWriter, r *http.Request)(err error){
+	todos, err := retrieveAll()
+	if err !=nil {
+		return
+	}
+	output, err := json.MarshalIndent(&todos, "", "\t\t")
+	if err != nil {
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(output)
+	return
+}
+
 func main(){
 	server := http.Server{
 		Addr: ":8080",
 	}
-	http.HandleFunc("/todo/", handleRequest)
+	http.HandleFunc("/todo/", handleTodo)
+	http.HandleFunc("/todos", handleTodos)
 	server.ListenAndServe()
 }
