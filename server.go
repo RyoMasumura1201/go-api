@@ -1,54 +1,49 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"path"
 	"strconv"
 )
 
-type Todo struct {
-	Id int `json:"id"`
-	Content string `json:"content"`
+func handleTodo(t Text) http.HandlerFunc{
+	return func(w http.ResponseWriter, r *http.Request){
+	    var err error
+	    switch r.Method {
+	    case "POST":
+	    	err = handlePostTodo(w, r, t)
+	    case "DELETE":
+	    	err = handleDeleteTodo(w, r, t)
+	    default:
+	    	http.Error(w, "Not Found", http.StatusNotFound)
+	    }
+	    if err != nil {
+	    	http.Error(w, err.Error(), http.StatusInternalServerError)
+	    	return
+	    }
+    }
 }
 
+// func handleTodos(w http.ResponseWriter, r *http.Request){
+// 	var err error
+// 	switch r.Method {
+// 	case "GET":
+// 		err = handleGetTodos(w, r)
+// 	default:
+// 		http.Error(w, "Not Found", http.StatusNotFound)
+// 	}
+// 	if err != nil {
+// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+// 		return
+// 	}
+// }
 
-func handleTodo(w http.ResponseWriter, r *http.Request){
-	var err error
-	switch r.Method {
-	case "POST":
-		err = handlePostTodo(w, r)
-	case "DELETE":
-		err = handleDeleteTodo(w, r)
-	default:
-		http.Error(w, "Not Found", http.StatusNotFound)
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-}
-
-func handleTodos(w http.ResponseWriter, r *http.Request){
-	var err error
-	switch r.Method {
-	case "GET":
-		err = handleGetTodos(w, r)
-	default:
-		http.Error(w, "Not Found", http.StatusNotFound)
-	}
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-}
-
-func handlePostTodo(w http.ResponseWriter, r *http.Request)(err error){
+func handlePostTodo(w http.ResponseWriter, r *http.Request, todo Text)(err error){
 	len := r.ContentLength
 	body := make([]byte, len)
 	r.Body.Read(body)
-	var todo Todo
 	json.Unmarshal(body, &todo)
 	err = todo.create()
 	if err != nil {
@@ -58,12 +53,12 @@ func handlePostTodo(w http.ResponseWriter, r *http.Request)(err error){
 	return
 }
 
-func handleDeleteTodo(w http.ResponseWriter, r *http.Request)(err error){
+func handleDeleteTodo(w http.ResponseWriter, r *http.Request, todo Text)(err error){
 	id ,err := strconv.Atoi(path.Base(r.URL.Path))
 	if err != nil {
 		return
 	}
-	todo, err := retrieve(id)
+	err = todo.fetch(id)
 	if err != nil {
 		return
 	} 
@@ -75,25 +70,30 @@ func handleDeleteTodo(w http.ResponseWriter, r *http.Request)(err error){
 	return
 }
 
-func handleGetTodos(w http.ResponseWriter, r *http.Request)(err error){
-	todos, err := retrieveAll()
-	if err !=nil {
-		return
-	}
-	output, err := json.MarshalIndent(&todos, "", "\t\t")
-	if err != nil {
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(output)
-	return
-}
+// func handleGetTodos(w http.ResponseWriter, r *http.Request)(err error){
+// 	todos, err := retrieveAll()
+// 	if err !=nil {
+// 		return
+// 	}
+// 	output, err := json.MarshalIndent(&todos, "", "\t\t")
+// 	if err != nil {
+// 		return
+// 	}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.Write(output)
+// 	return
+// }
 
 func main(){
+	var err error
+	db, err := sql.Open("postgres", "user=gotodo dbname=gotodo password=password sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
 	server := http.Server{
 		Addr: ":8080",
 	}
-	http.HandleFunc("/todo/", handleTodo)
-	http.HandleFunc("/todos/", handleTodos)
+	http.HandleFunc("/todo/", handleTodo(&Todo{Db: db}))
+	// http.HandleFunc("/todos/", handleTodos)
 	server.ListenAndServe()
 }
