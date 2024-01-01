@@ -88,7 +88,7 @@ func handleGetTodos(w http.ResponseWriter, r *http.Request, todo Text)(err error
 
 func main(){
 	var err error
-	db, err := sql.Open("postgres", "user=gotodo dbname=gotodo password=password sslmode=disable")
+	db, err := sql.Open("postgres", "host=host.docker.internal user=gotodo dbname=gotodo password=password sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
