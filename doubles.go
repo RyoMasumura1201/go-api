@@ -21,3 +21,7 @@ func (todo *FakeTodo)update()(err error){
 func (todo *FakeTodo)delete()(err error){
 	return
 }
+
+func (todo *FakeTodo)fetchAll()(todos []Todo, err error){
+	return 
+}

@@ -26,19 +26,21 @@ func handleTodo(t Text) http.HandlerFunc{
     }
 }
 
-// func handleTodos(w http.ResponseWriter, r *http.Request){
-// 	var err error
-// 	switch r.Method {
-// 	case "GET":
-// 		err = handleGetTodos(w, r)
-// 	default:
-// 		http.Error(w, "Not Found", http.StatusNotFound)
-// 	}
-// 	if err != nil {
-// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		return
-// 	}
-// }
+func handleTodos(t Text) http.HandlerFunc{
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+	    switch r.Method {
+	    case "GET":
+			err = handleGetTodos(w, r, t)
+	    default:
+			http.Error(w, "Not Found", http.StatusNotFound)
+	    }
+	    if err != nil {
+	    	http.Error(w, err.Error(), http.StatusInternalServerError)
+	    	return
+	    }
+	}
+}
 
 func handlePostTodo(w http.ResponseWriter, r *http.Request, todo Text)(err error){
 	len := r.ContentLength
@@ -70,19 +72,19 @@ func handleDeleteTodo(w http.ResponseWriter, r *http.Request, todo Text)(err err
 	return
 }
 
-// func handleGetTodos(w http.ResponseWriter, r *http.Request)(err error){
-// 	todos, err := retrieveAll()
-// 	if err !=nil {
-// 		return
-// 	}
-// 	output, err := json.MarshalIndent(&todos, "", "\t\t")
-// 	if err != nil {
-// 		return
-// 	}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.Write(output)
-// 	return
-// }
+func handleGetTodos(w http.ResponseWriter, r *http.Request, todo Text)(err error){
+	todos, err := todo.fetchAll()
+	if err !=nil {
+		return
+	}
+	output, err := json.MarshalIndent(&todos, "", "\t\t")
+	if err != nil {
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(output)
+	return
+}
 
 func main(){
 	var err error
@@ -94,6 +96,6 @@ func main(){
 		Addr: ":8080",
 	}
 	http.HandleFunc("/todo/", handleTodo(&Todo{Db: db}))
-	// http.HandleFunc("/todos/", handleTodos)
+	http.HandleFunc("/todos/", handleTodos(&Todo{Db: db}))
 	server.ListenAndServe()
 }

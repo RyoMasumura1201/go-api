@@ -7,17 +7,17 @@ import (
 	"testing"
 )
 
-// func TestHandleGetTodos(t *testing.T){
-// 	mux := http.NewServeMux()
-// 	mux.HandleFunc("/todos/", handleTodo(&FakeTodo{}))
-// 	writer := httptest.NewRecorder()
-// 	request, _ := http.NewRequest("GET", "/todos/", nil)
-// 	mux.ServeHTTP(writer, request)
+func TestHandleGetTodos(t *testing.T){
+	mux := http.NewServeMux()
+	mux.HandleFunc("/todos/", handleTodos(&FakeTodo{}))
+	writer := httptest.NewRecorder()
+	request, _ := http.NewRequest("GET", "/todos/", nil)
+	mux.ServeHTTP(writer, request)
 
-// 	if writer.Code != 200 {
-// 		t.Errorf("Response code is %v", writer.Code)
-// 	}
-// }
+	if writer.Code != 200 {
+		t.Errorf("Response code is %v", writer.Code)
+	}
+}
 
 func TestHandlePostTodo(t *testing.T){
 	mux := http.NewServeMux()
