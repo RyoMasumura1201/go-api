@@ -1,5 +1,11 @@
 # go-todo
 
+- ビルド
+
+```
+docker build -t go-todo .
+```
+
 - コンテナ起動
 
 ```
