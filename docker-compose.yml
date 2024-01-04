@@ -4,3 +4,10 @@ services:
     build: .
     ports:
       - 80:8080
+  db:
+    image: postgres:16-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: gotodo
+      POSTGRES_PASSWORD: password
