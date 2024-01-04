@@ -1,4 +1,4 @@
-FROM golang
+FROM golang::1.21.5-alpine
 COPY . /go/src/github.com/RyoMasumura1201/go-todo
 
 WORKDIR /go/src/github.com/RyoMasumura1201/go-todo
