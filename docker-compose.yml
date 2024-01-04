@@ -11,3 +11,5 @@ services:
     environment:
       POSTGRES_USER: gotodo
       POSTGRES_PASSWORD: password
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
