@@ -4,6 +4,9 @@ services:
     build: .
     ports:
       - 80:8080
+    environment:
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       db:
         condition: service_healthy
@@ -12,8 +15,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_USER: gotodo
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:

@@ -3,7 +3,9 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"os"
 	"path"
 	"strconv"
 )
@@ -88,7 +90,8 @@ func handleGetTodos(w http.ResponseWriter, r *http.Request, todo Text)(err error
 
 func main(){
 	var err error
-	db, err := sql.Open("postgres", "host=db user=gotodo dbname=gotodo password=password sslmode=disable")
+	dataSourceName := fmt.Sprintf("host=db user=%s dbname=gotodo password=%s sslmode=disable", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"))
+	db, err := sql.Open("postgres", dataSourceName)
 	if err != nil {
 		panic(err)
 	}
