@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-todo
+  labels:
+    apps: go-todo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: go-todo
+  template:
+    metadata:
+      labels:
+        app: go-todo
+    spec:
+      containers:
+        - name: server
+          image: go-todo
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_USER
+              value: gotodo
+            - name: DB_PASSWORD
+              value: password
