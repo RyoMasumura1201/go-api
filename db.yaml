@@ -18,6 +18,9 @@ spec:
       containers:
         - name: db
           image: postgres:16-alpine
+          volumeMounts:
+            - name: sql-init-config
+              mountPath: /docker-entrypoint-initdb.d
           ports:
             - containerPort: 5432
           env:
@@ -25,3 +28,10 @@ spec:
               value: gotodo
             - name: POSTGRES_PASSWORD
               value: password
+      volumes:
+        - name: sql-init-config
+          configMap:
+            name: db-init-configmap
+            items:
+              - key: init.sql
+                path: init.sql
