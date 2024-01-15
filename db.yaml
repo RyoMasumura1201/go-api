@@ -50,3 +50,12 @@ spec:
             items:
               - key: init.sql
                 path: init.sql
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: ssd
+        resources:
+          requests:
+            storage: 4Gi
