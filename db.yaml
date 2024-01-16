@@ -34,6 +34,8 @@ spec:
         - name: db
           image: postgres:16-alpine
           volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
             - name: sql-init-config
               mountPath: /docker-entrypoint-initdb.d
           ports:

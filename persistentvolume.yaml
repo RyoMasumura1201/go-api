@@ -12,16 +12,3 @@ spec:
   storageClassName: ssd
   hostPath:
     path: /go-todo
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: ssd-pvc
-spec:
-  storageClassName: ssd
-  resources:
-    requests:
-      storage: 4Gi
-  accessModes:
-    - ReadWriteOnce
