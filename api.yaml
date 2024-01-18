@@ -21,8 +21,7 @@ metadata:
     name: go-todo
 spec:
   rules:
-    - host: gotodo.local
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
