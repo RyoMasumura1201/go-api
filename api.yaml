@@ -3,13 +3,32 @@ kind: Service
 metadata:
   name: go-todo
 spec:
-  type: NodePort
   selector:
     app: go-todo
   ports:
     - name: http
       port: 80
       targetPort: 8080
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: go-todo
+  labels:
+    name: go-todo
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: go-todo
+                port:
+                  number: 80
 
 ---
 apiVersion: apps/v1
